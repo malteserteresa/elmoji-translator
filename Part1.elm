@@ -43,9 +43,7 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        SetCurrentText newText ->
-            -- currently, this does nothing!
-            model
+        SetCurrentText newText -> { model | currentText = newText }
 
 
 
@@ -70,7 +68,8 @@ view model =
                     [ Html.text "Elmoji Translator" ]
                 ]
             ]
-        , Html.section
+        ,
+         Html.section
             [ Html.Attributes.class "container" ]
             [ Html.div
                 [ Html.Attributes.class "input-field" ]
@@ -82,5 +81,8 @@ view model =
                     ]
                     []
                 ]
-            ]
+            ],
+            Html.p
+                [ Html.Attributes.class "center output-text emoji-size" ]
+                [ Html.text model.currentText ]
         ]
