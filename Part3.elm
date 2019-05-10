@@ -24,14 +24,20 @@ main =
 
 -- MODEL
 
+type Direction
+    = TextToEmoji
+    | EmojiToText
 
 type alias Model =
-    { currentText : String }
+    { currentText : String
+    , direction : Direction
+    }
 
 
 init : Model
 init =
-    { currentText = "" }
+    { currentText = "",
+      direction = TextToEmoji }
 
 
 defaultKey : String
@@ -44,7 +50,7 @@ defaultKey =
 
 
 type Msg
-    = SetCurrentText String
+    = SetCurrentText String | ToggleDirection
 
 
 update : Msg -> Model -> Model
@@ -53,8 +59,14 @@ update msg model =
         SetCurrentText newText ->
             { model | currentText = newText }
 
+        ToggleDirection ->
+            case model.direction of
+                TextToEmoji ->
+                    -- return a model with a direction value of `EmojiToText`
+                    { model | direction = EmojiToText }
 
-
+                EmojiToText ->
+                    { model | direction = TextToEmoji }
 -- VIEW
 
 
@@ -88,13 +100,36 @@ view model =
                     ]
                     []
                 ]
+         ,  Html.div
+             [ Html.Attributes.class "switch center" ]
+             [ Html.label
+                []
+                [ Html.text "Translate Text"
+                   , Html.input
+                   [ Html.Attributes.type_ "checkbox", Html.Events.onClick ToggleDirection ]
+                   []
+                     , Html.span
+                     [ Html.Attributes.class "lever" ]
+                     []
+                     , Html.text "Translate Emoji"
+                ]
+               ]
+
             , Html.p
                 [ Html.Attributes.class "center output-text emoji-size" ]
                 [ Html.text (translateText model) ]
-            ]
-        ]
+                ]
+                ]
+
+
 
 
 translateText : Model -> String
 translateText model =
-    EmojiConverter.textToEmoji defaultKey model.currentText
+    case model.direction of
+          TextToEmoji ->
+                EmojiConverter.textToEmoji defaultKey model.currentText
+
+          EmojiToText ->
+                EmojiConverter.emojiToText defaultKey model.currentText
+
