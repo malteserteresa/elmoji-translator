@@ -1,9 +1,11 @@
 module Part2 exposing (Model, Msg(..), init, main, update, view)
 
+
 import Browser
 import Html
 import Html.Attributes
 import Html.Events
+import EmojiConverter
 
 
 
@@ -32,6 +34,10 @@ init =
     { currentText = "" }
 
 
+defaultKey = "😅"
+translateText: Model -> String
+translateText model =
+    EmojiConverter.textToEmoji defaultKey model.currentText
 
 -- UPDATE
 
@@ -81,8 +87,9 @@ view model =
                     ]
                     []
                 ]
-            , Html.p
-                [ Html.Attributes.class "center output-text emoji-size" ]
-                [ Html.text model.currentText ]
+            ,
+              Html.p
+                  [ Html.Attributes.class "center output-text emoji-size" ]
+                  [ Html.text (translateText model) ]
             ]
         ]
