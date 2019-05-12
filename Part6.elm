@@ -31,6 +31,7 @@ type Direction
 
 type alias Model =
     { currentText : String
+    ,  selectedKey : String
     , direction : Direction
     }
 
@@ -38,6 +39,7 @@ type alias Model =
 init : Model
 init =
     { currentText = ""
+    , selectedKey = defaultKey
     , direction = TextToEmoji
     }
 
@@ -53,6 +55,7 @@ defaultKey =
 
 type Msg
     = SetCurrentText String
+    | SetSelectedKey String
     | ToggleDirection
 
 
@@ -62,6 +65,9 @@ update msg model =
         SetCurrentText newText ->
             { model | currentText = newText }
 
+        SetSelectedKey newKey ->
+            { model | selectedKey = newKey }
+
         ToggleDirection ->
             case model.direction of
                 TextToEmoji ->
@@ -69,6 +75,7 @@ update msg model =
 
                 EmojiToText ->
                     { model | direction = TextToEmoji }
+
 
 
 
@@ -133,7 +140,7 @@ view model =
             [ Html.h4
                 [ Html.Attributes.class "center" ]
                 [ Html.text "Select Your Key" ]
-            , renderKeys
+            , renderKeys model
             ]
         ]
 
@@ -148,22 +155,23 @@ translateText model =
             EmojiConverter.emojiToText defaultKey model.currentText
 
 
-renderKeys : Html.Html Msg
-renderKeys =
+renderKeys :Model -> Html.Html Msg
+renderKeys model =
     Html.div
         [ Html.Attributes.class "row" ]
-        (List.map (\emoji -> renderKey emoji) EmojiConverter.supportedEmojis)
+        (List.map (\emoji -> renderKey model emoji) EmojiConverter.supportedEmojis)
 
 
-renderKey : String -> Html.Html Msg
-renderKey emoji =
+renderKey : Model -> String  -> Html.Html Msg
+renderKey model emoji =
     Html.div
         [ Html.Attributes.class "col s2 m1 emoji-size" ]
         [ Html.div
             [ Html.Attributes.classList
                 [ ( "key-selector", True )
-                , ( "is-selected", emoji == defaultKey )
+                , ( "is-selected", emoji == model.selectedKey )
                 ]
+             , Html.Events.onClick (SetSelectedKey emoji)
             ]
             [ Html.text emoji ]
         ]
