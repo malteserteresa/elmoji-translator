@@ -10,3 +10,6 @@ Requires [the Elm Platform](https://guide.elm-lang.org/get_started.html) to run.
 elm-reactor
 open http://localhost:8000/Main.elm
 ```
+
+
+This tutorial comes from the brilliant guys at ElmBridge!
